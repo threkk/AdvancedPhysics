@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D257F2218C738920045C068 /* mobile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D257F2018C738920045C068 /* mobile.cpp */; };
 		9DBFE9AD18C711D00079BF4C /* app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBFE9A818C711D00079BF4C /* app.cpp */; };
 		9DBFE9AF18C711D00079BF4C /* timing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBFE9AB18C711D00079BF4C /* timing.cpp */; };
 		9DBFE9B118C711F60079BF4C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBFE9B018C711F60079BF4C /* main.cpp */; };
 		9DBFE9B318C714DC0079BF4C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DBFE9B218C714DC0079BF4C /* OpenGL.framework */; };
 		9DBFE9B518C714E20079BF4C /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DBFE9B418C714E20079BF4C /* GLUT.framework */; };
 		9DBFE9B718C714EE0079BF4C /* libcyclone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DBFE9B618C714EE0079BF4C /* libcyclone.a */; };
-		9DBFE9BA18C718540079BF4C /* ballistic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBFE9B918C718540079BF4C /* ballistic.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +29,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9D257F2018C738920045C068 /* mobile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mobile.cpp; sourceTree = "<group>"; };
 		9DBFE99C18C711800079BF4C /* Assignment 3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Assignment 3"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DBFE9A818C711D00079BF4C /* app.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = app.cpp; sourceTree = "<group>"; };
 		9DBFE9A918C711D00079BF4C /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = app.h; sourceTree = "<group>"; };
@@ -38,7 +39,6 @@
 		9DBFE9B218C714DC0079BF4C /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		9DBFE9B418C714E20079BF4C /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		9DBFE9B618C714EE0079BF4C /* libcyclone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcyclone.a; sourceTree = "<group>"; };
-		9DBFE9B918C718540079BF4C /* ballistic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ballistic.cpp; path = "../../Assignment 1/Assignment 1/ballistic.cpp"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,12 +75,12 @@
 		9DBFE99E18C711800079BF4C /* Assignment 3 */ = {
 			isa = PBXGroup;
 			children = (
-				9DBFE9B918C718540079BF4C /* ballistic.cpp */,
 				9DBFE9B018C711F60079BF4C /* main.cpp */,
 				9DBFE9A818C711D00079BF4C /* app.cpp */,
 				9DBFE9A918C711D00079BF4C /* app.h */,
 				9DBFE9AB18C711D00079BF4C /* timing.cpp */,
 				9DBFE9AC18C711D00079BF4C /* timing.h */,
+				9D257F2018C738920045C068 /* mobile.cpp */,
 			);
 			path = "Assignment 3";
 			sourceTree = "<group>";
@@ -147,9 +147,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				9DBFE9AD18C711D00079BF4C /* app.cpp in Sources */,
-				9DBFE9BA18C718540079BF4C /* ballistic.cpp in Sources */,
 				9DBFE9AF18C711D00079BF4C /* timing.cpp in Sources */,
 				9DBFE9B118C711F60079BF4C /* main.cpp in Sources */,
+				9D257F2218C738920045C068 /* mobile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +275,7 @@
 				9DBFE9A718C711800079BF4C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
