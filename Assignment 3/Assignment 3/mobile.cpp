@@ -8,8 +8,8 @@
 
 #include <gl/glut.h>
 #include <cyclone/cyclone.h>
-#include "app.h"
-#include "timing.h"
+#include "../../app.h"
+#include "../../timing.h"
 
 #include <stdio.h>
 
@@ -41,29 +41,88 @@ public:
 
 
 // TODO: Crear la figura.
-Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT){
-    
-    rods = new ParticleRod[ROD_COUNT];
-    cables = new ParticleCable[CABLE_COUNT];
-    springs = new ParticleAnchoredSpring[SPRING_COUNT];
-    
+// Constructor
+Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0), springs(0){
+
+
     // Fixed point, everthing hangs from here.
     particleArray[0].setPosition(0.0f, 0.0f, 0.0f);
     particleArray[0].setVelocity(0.0f, 0.0f, 0.0f);
     particleArray[0].setAcceleration(0.0f, 0.0f, 0.0f);
     particleArray[0].clearAccumulator();
-    
+
+	
+	// Central cross point
+    particleArray[1].setPosition(0.0f, 5.0f, 0.0f);
+    particleArray[1].setVelocity(0.0f, 0.0f, 0.0f);
+    particleArray[1].setAcceleration(cyclone::Vector3::GRAVITY);
+    particleArray[1].clearAccumulator();
+
+
+	// Corners of the cross
+	for (unsigned i = 2; i < 10; i++)
+    {
+		switch(i){
+
+		case 2 :
+			particleArray[i].setPosition(3.0f, 5.0f, 0.0f);
+		case 3 :
+			particleArray[i].setPosition(-3.0f, 5.0f, 0.0f);
+		case 4 :
+			particleArray[i].setPosition(0.0f, 5.0f, 3.0f);
+		case 5 :
+			particleArray[i].setPosition(0.0f, 5.0f, -3.0f);
+		case 6 :
+			particleArray[i].setPosition(3.0f, 10.0f, 0.0f);
+		case 7 :
+			particleArray[i].setPosition(-3.0f, 10.0f, 0.0f);
+		case 8 :
+			particleArray[i].setPosition(0.0f, 10.0f, 3.0f);
+		case 9 :
+			particleArray[i].setPosition(0.0f, 10.0f, -3.0f);
+
+		}
+        particleArray[i].setPosition(0.0f, 5.0f, 0.0f);
+		particleArray[i].setVelocity(0.0f, 0.0f, 0.0f);
+		particleArray[i].setAcceleration(cyclone::Vector3::GRAVITY);
+		particleArray[i].clearAccumulator();
+    }
+
+
+	// Create the rods
+	rods = new ParticleRod[ROD_COUNT];
+
+	for (unsigned i = 0; i < 4; i++){
+		rods[i].particle[0] = &particleArray[1];
+		rods[i].particle[1] = &particleArray[i+2];
+		rods[i].length = 2;
+		world.getContactGenerators().push_back(&rods[i]);
+	}
+
+
+	// Create the cables
+	cables = new ParticleCable[CABLE_COUNT];
+
+	for (unsigned i = 0; i < 4; i++){
+		cables[i].particle[0] = &particleArray[0];
+		cables[i].particle[1] = &particleArray[i+2];
+		cables[i].maxLength = 1.9f;
+		cables[i].restitution = 0.3f;
+		world.getContactGenerators().push_back(&cables[i]);
+	}
+
+
+	// Create the springs
+	springs = new ParticleAnchoredSpring[SPRING_COUNT];
     
 }
 
-//TODO: Decidir que se mueve.
-void Mobile::key(unsigned char key)
+// Destructor
+Mobile::~Mobile()
 {
-    switch(key)
-    {
-        default:
-            MassAggregateApplication::key(key);
-    }
+    if(rods) delete[] rods;
+    if(cables) delete[] cables;
+    if(springs) delete[] springs;
 }
 
 // TODO: Añadir las fuerzas. No las estamos teniendo en cuenta hasta ahora.
@@ -83,6 +142,7 @@ void Mobile::display()
      */
     MassAggregateApplication::display();
 
+	
     glBegin(GL_LINES);
     
     // Blue rods
@@ -96,6 +156,7 @@ void Mobile::display()
         glVertex3f(p1.x, p1.y, p1.z);
     }
     
+	
     // Green cables
     glColor3f(0,1,0);
     for (unsigned i = 0; i < CABLE_COUNT; i++)
@@ -107,6 +168,8 @@ void Mobile::display()
         glVertex3f(p1.x, p1.y, p1.z);
     }
     
+	
+	/*
     // Red springs
     glColor3f(1, 0, 0);
     for (unsigned i = 0; i < SPRING_COUNT; i++)
@@ -114,16 +177,34 @@ void Mobile::display()
         const Vector3 *p = springs[i].getAnchor();
         glVertex3f(p->x, p->y, p->z);
     }
+	*/
  
     glEnd();
 }
 
-Mobile::~Mobile()
+
+
+//TODO: Define key input.
+// Handles key input
+void Mobile::key(unsigned char key)
 {
-    if(rods) delete[] rods;
-    if(cables) delete[] cables;
-    if(springs) delete[] springs;
+	switch(key)
+    {
+    case 'w': case 'W':
+        
+        break;
+    case 'a': case 'A':
+        
+        break;
+    case 'd': case 'D':
+        
+        break;
+
+    default:
+        MassAggregateApplication::key(key);
+    }
 }
+
 
 const char* Mobile::getTitle()
 {
