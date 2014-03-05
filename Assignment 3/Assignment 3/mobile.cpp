@@ -13,8 +13,12 @@
 
 #include <stdio.h>
 
-
+/*
+ * 10 particles: 1 fixed, 5 for the cross, 4 hanging in the springs.
+ */
+#define PARTICLES_COUNT 10
 #define ROD_COUNT 4
+#define CABLE_COUNT 4
 #define SPRING_COUNT 4
 
 using namespace cyclone;
@@ -22,7 +26,8 @@ using namespace cyclone;
 class Mobile : public MassAggregateApplication
 {
     ParticleRod *rods;
-    
+    ParticleCable *cables;
+    ParticleAnchoredSpring *springs;
     
 public:
     Mobile();
@@ -35,91 +40,95 @@ public:
 };
 
 
-Mobile::Mobile() : MassAggregateApplication(5){
+// TODO: Crear la figura.
+Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT){
     
     rods = new ParticleRod[ROD_COUNT];
+    cables = new ParticleCable[CABLE_COUNT];
+    springs = new ParticleAnchoredSpring[SPRING_COUNT];
     
-    particles[0]
-    for (unsigned i = 1; i < 5; i++) {
-        particles[i]
-    }
+    // Fixed point, everthing hangs from here.
+    particleArray[0].setPosition(0.0f, 0.0f, 0.0f);
+    particleArray[0].setVelocity(0.0f, 0.0f, 0.0f);
+    particleArray[0].setAcceleration(0.0f, 0.0f, 0.0f);
+    particleArray[0].clearAccumulator();
+    
     
 }
 
-Mobile::~Mobile(){
-    if(rods) delete[] rods;
-}
-
-void Mobile::display()
+//TODO: Decidir que se mueve.
+void Mobile::key(unsigned char key)
 {
-    MassAggregateApplication::display();
-    
-    glBegin(GL_LINES);
-    glColor3f(0,0,1);
-    
-    const Vector3 &p = parts->getPosition();
-    
-    glVertex3f(p.x,p.y,p.z);
-    
-/*    for (unsigned i = 0; i < ROD_COUNT; i++)
+    switch(key)
     {
-        cyclone::Particle **particles = rods[i].particle;
-        const cyclone::Vector3 &p0 = particles[0]->getPosition();
-        const cyclone::Vector3 &p1 = particles[1]->getPosition();
-        glVertex3f(p0.x, p0.y, p0.z);
-        glVertex3f(p1.x, p1.y, p1.z);
+        default:
+            MassAggregateApplication::key(key);
     }
-    
-    glColor3f(0,1,0);
-    for (unsigned i = 0; i < CABLE_COUNT; i++)
-    {
-        cyclone::Particle **particles = cables[i].particle;
-        const cyclone::Vector3 &p0 = particles[0]->getPosition();
-        const cyclone::Vector3 &p1 = particles[1]->getPosition();
-        glVertex3f(p0.x, p0.y, p0.z);
-        glVertex3f(p1.x, p1.y, p1.z);
-    }
-    
-    glColor3f(0.7f, 0.7f, 0.7f);
-    for (unsigned i = 0; i < SUPPORT_COUNT; i++)
-    {
-        const cyclone::Vector3 &p0 = supports[i].particle->getPosition();
-        const cyclone::Vector3 &p1 = supports[i].anchor;
-        glVertex3f(p0.x, p0.y, p0.z);
-        glVertex3f(p1.x, p1.y, p1.z);
-    }
- */
-    glEnd();
-    
-    glColor3f(1,0,0);
-    glPushMatrix();
-//  glTranslatef(massDisplayPos.x, massDisplayPos.y+0.25f, massDisplayPos.z);
-    glutSolidSphere(0.25f, 20, 10);
-    glPopMatrix();
 }
 
+// TODO: Añadir las fuerzas. No las estamos teniendo en cuenta hasta ahora.
 void Mobile::update()
 {
     MassAggregateApplication::update();
     
 }
 
+
+void Mobile::display()
+{
+    
+    /*
+     * Es posible que haya que cambiar esto mas adelante cuando veamos exactamente como se comportan
+     * los muelles y como funcionan las fuerzas.
+     */
+    MassAggregateApplication::display();
+
+    glBegin(GL_LINES);
+    
+    // Blue rods
+    glColor3f(0,0,1);
+    for (unsigned i = 0; i < ROD_COUNT; i++)
+    {
+        Particle **particles = rods[i].particle;
+        const Vector3 &p0 = particles[0]->getPosition();
+        const Vector3 &p1 = particles[1]->getPosition();
+        glVertex3f(p0.x, p0.y, p0.z);
+        glVertex3f(p1.x, p1.y, p1.z);
+    }
+    
+    // Green cables
+    glColor3f(0,1,0);
+    for (unsigned i = 0; i < CABLE_COUNT; i++)
+    {
+        Particle **particles = cables[i].particle;
+        const Vector3 &p0 = particles[0]->getPosition();
+        const Vector3 &p1 = particles[1]->getPosition();
+        glVertex3f(p0.x, p0.y, p0.z);
+        glVertex3f(p1.x, p1.y, p1.z);
+    }
+    
+    // Red springs
+    glColor3f(1, 0, 0);
+    for (unsigned i = 0; i < SPRING_COUNT; i++)
+    {
+        const Vector3 *p = springs[i].getAnchor();
+        glVertex3f(p->x, p->y, p->z);
+    }
+ 
+    glEnd();
+}
+
+Mobile::~Mobile()
+{
+    if(rods) delete[] rods;
+    if(cables) delete[] cables;
+    if(springs) delete[] springs;
+}
+
 const char* Mobile::getTitle()
 {
     return "Assignment 3 > Mobile";
 }
-
-void Mobile::key(unsigned char key)
-{
-    switch(key)
-    {
-
-            
-        default:
-            MassAggregateApplication::key(key);
-    }
-}
-
 
 Application* getApplication()
 {
