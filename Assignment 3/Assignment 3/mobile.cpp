@@ -163,7 +163,9 @@ Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0)
 
 	// Create the springs
 	for(unsigned i=0; i<SPRING_COUNT; i++){
+		ParticleForceRegistry registry;
 		springs[i] = new ParticleSpring(&particleArray[i+6],90.0,0.5);
+		registry.add(&particleArray[i+2], springs[i]);
 	}
 	
     
@@ -183,7 +185,7 @@ void Mobile::update()
     MassAggregateApplication::update();
 
 	for (unsigned i = 0; i < SPRING_COUNT; i++) {
-       springs[i]->updateForce(&particleArray[2+i], 1);
+       springs[i]->updateForce(&particleArray[6+i], 1.0);
     }
     
 }
@@ -196,9 +198,7 @@ void Mobile::display()
      * Es posible que haya que cambiar esto mas adelante cuando veamos exactamente como se comportan
      * los muelles y como funcionan las fuerzas.
      */
-    MassAggregateApplication::display();
-
-	
+    MassAggregateApplication::display();	
 	
     glBegin(GL_LINES);
     
@@ -231,9 +231,6 @@ void Mobile::display()
     glColor3f(1, 0, 0);
     for (unsigned i = 0; i < SPRING_COUNT; i++)
     {
-		//const Vector3 p = particleArray[i+2].getPosition();
-        //glVertex3f(p.x, p.y, p.z);
-
 		glVertex3f(particleArray[2+i].getPosition().x, particleArray[2+i].getPosition().y, particleArray[2+i].getPosition().z);
         glVertex3f(particleArray[6+i].getPosition().x, particleArray[6+i].getPosition().y, particleArray[6+i].getPosition().z);
 
