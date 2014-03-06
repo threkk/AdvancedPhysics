@@ -17,8 +17,8 @@
  * 10 particles: 1 fixed, 5 for the cross, 4 hanging in the springs.
  */
 #define PARTICLES_COUNT 10
-#define ROD_COUNT 4
-#define CABLE_COUNT 4
+#define ROD_COUNT 6
+#define CABLE_COUNT 5
 #define SPRING_COUNT 4
 
 #define PMAS 4
@@ -28,7 +28,7 @@ using namespace cyclone;
 class Mobile : public MassAggregateApplication
 {
     ParticleRod *rods;
-    ParticleCable *cables;
+    ParticleCableConstraint *cables;
     ParticleAnchoredSpring *springs;
     
 public:
@@ -68,16 +68,16 @@ Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0)
 		switch(i){
 
 		case 2 :
-			particleArray[i].setPosition(3.0, 3.0, 0.0);
+			particleArray[i].setPosition(3.0, 4.0, 0.0);
 			break;
 		case 3 :
-			particleArray[i].setPosition(-3.0, 3.0, 0.0);
+			particleArray[i].setPosition(-3.0, 4.0, 0.0);
 			break;
 		case 4 :
-			particleArray[i].setPosition(0.0, 3.0, 3.0);
+			particleArray[i].setPosition(0.0, 4.0, 3.0);
 			break;
 		case 5 :
-			particleArray[i].setPosition(0.0, 3.0, -3.0);
+			particleArray[i].setPosition(0.0, 4.0, -3.0);
 			break;
 		case 6 :
 			particleArray[i].setPosition(3.0, 0.0, 0.0);
@@ -107,21 +107,37 @@ Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0)
 	for (unsigned i = 0; i < 4; i++){
 		rods[i].particle[0] = &particleArray[1];
 		rods[i].particle[1] = &particleArray[i+2];
-		rods[i].length = 2;
+		rods[i].length = 3;
 		world.getContactGenerators().push_back(&rods[i]);
 	}
 
+	rods[4].particle[0] = &particleArray[2];
+	rods[4].particle[1] = &particleArray[3];
+	rods[4].length = 6;
+	world.getContactGenerators().push_back(&rods[4]);
+
+	rods[5].particle[0] = &particleArray[4];
+	rods[5].particle[1] = &particleArray[5];
+	rods[5].length = 6;
+	world.getContactGenerators().push_back(&rods[5]);
+
 	
 	// Create the cables
-	cables = new ParticleCable[CABLE_COUNT];
+	cables = new ParticleCableConstraint[CABLE_COUNT];
 
 	for (unsigned i = 0; i < 4; i++){
-		cables[i].particle[0] = &particleArray[0];
-		cables[i].particle[1] = &particleArray[i+2];
-		cables[i].maxLength = 0.3f;
+		cables[i].particle = &particleArray[i+2];
+		cables[i].anchor = Vector3(0,7,0);
+		cables[i].maxLength = 5.0;
 		cables[i].restitution = 0.3f;
 		world.getContactGenerators().push_back(&cables[i]);
 	}
+
+	cables[4].particle = &particleArray[1];
+	cables[4].anchor = Vector3(0,7,0);
+	cables[4].maxLength = 4.0;
+	cables[4].restitution = 0.3f;
+	world.getContactGenerators().push_back(&cables[4]);
 
 
 	// Create the springs
@@ -176,9 +192,9 @@ void Mobile::display()
     glColor3f(0,1,0);
     for (unsigned i = 0; i < CABLE_COUNT; i++)
     {
-        Particle **particles = cables[i].particle;
-        const Vector3 &p0 = particles[0]->getPosition();
-        const Vector3 &p1 = particles[1]->getPosition();
+
+		const cyclone::Vector3 &p0 = cables[i].particle->getPosition();
+        const cyclone::Vector3 &p1 = cables[i].anchor;
         glVertex3f(p0.x, p0.y, p0.z);
         glVertex3f(p1.x, p1.y, p1.z);
     }
