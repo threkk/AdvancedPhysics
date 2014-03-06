@@ -249,7 +249,6 @@ void Mobile::display()
 // Handles key input
 void Mobile::key(unsigned char key)
 {
-	Vector3 pos2;
 	switch(key)
     {
     case 'w': case 'W':
@@ -264,11 +263,20 @@ void Mobile::key(unsigned char key)
         break;
     case 'a': case 'A':
         
+		for(unsigned i = 2; i<6; i++){
+			Vector3 pos = particleArray[i].getPosition();
+			pos.x = pos.x - 1.0;
+			particleArray[i].setPosition(pos);
+		}
+
         break;
     case 'd': case 'D':
-        pos2 = particleArray[4].getPosition();
-		pos2.x = pos2.x + 1.0;
-		particleArray[4].setPosition(pos2);
+     
+		for(unsigned i = 2; i<6; i++){
+			Vector3 pos = particleArray[i].getPosition();
+			pos.x = pos.x + 1.0;
+			particleArray[i].setPosition(pos);
+		}
 
         break;
 
