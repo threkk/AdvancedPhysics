@@ -46,49 +46,55 @@ Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0)
 
 
     // Fixed point, everthing hangs from here.
-    particleArray[0].setPosition(0.0f, 0.0f, 0.0f);
-    particleArray[0].setVelocity(0.0f, 0.0f, 0.0f);
-    particleArray[0].setAcceleration(0.0f, 0.0f, 0.0f);
+    particleArray[0].setPosition(0.0, 7.0, 0.0);
+    particleArray[0].setVelocity(0.0, 0.0, 0.0);
+    particleArray[0].setAcceleration(0.0, 0.0, 0.0);
     particleArray[0].clearAccumulator();
-
 	
 	// Central cross point
-    particleArray[1].setPosition(0.0f, 5.0f, 0.0f);
-    particleArray[1].setVelocity(0.0f, 0.0f, 0.0f);
+    particleArray[1].setPosition(0.0, 3.0, 0.0);
+    particleArray[1].setVelocity(0.0, 0.0, 0.0);
     particleArray[1].setAcceleration(cyclone::Vector3::GRAVITY);
     particleArray[1].clearAccumulator();
 
-
+	
 	// Corners of the cross
-	for (unsigned i = 2; i < 10; i++)
+	for (int i = 2; i < 10; i++)
     {
 		switch(i){
 
 		case 2 :
-			particleArray[i].setPosition(3.0f, 5.0f, 0.0f);
+			particleArray[i].setPosition(3.0, 3.0, 0.0);
+			break;
 		case 3 :
-			particleArray[i].setPosition(-3.0f, 5.0f, 0.0f);
+			particleArray[i].setPosition(-3.0, 3.0, 0.0);
+			break;
 		case 4 :
-			particleArray[i].setPosition(0.0f, 5.0f, 3.0f);
+			particleArray[i].setPosition(0.0, 3.0, 3.0);
+			break;
 		case 5 :
-			particleArray[i].setPosition(0.0f, 5.0f, -3.0f);
+			particleArray[i].setPosition(0.0, 3.0, -3.0);
+			break;
 		case 6 :
-			particleArray[i].setPosition(3.0f, 10.0f, 0.0f);
+			particleArray[i].setPosition(3.0, 0.0, 0.0);
+			break;
 		case 7 :
-			particleArray[i].setPosition(-3.0f, 10.0f, 0.0f);
+			particleArray[i].setPosition(-3.0, 0.0, 0.0);
+			break;
 		case 8 :
-			particleArray[i].setPosition(0.0f, 10.0f, 3.0f);
+			particleArray[i].setPosition(0.0, 0.0, 3.0);
+			break;
 		case 9 :
-			particleArray[i].setPosition(0.0f, 10.0f, -3.0f);
+			particleArray[i].setPosition(0.0, 0.0, -3.0);
+			break;
 
 		}
-        particleArray[i].setPosition(0.0f, 5.0f, 0.0f);
-		particleArray[i].setVelocity(0.0f, 0.0f, 0.0f);
+		particleArray[i].setVelocity(0.0, 0.0, 0.0);
 		particleArray[i].setAcceleration(cyclone::Vector3::GRAVITY);
 		particleArray[i].clearAccumulator();
     }
 
-
+	
 	// Create the rods
 	rods = new ParticleRod[ROD_COUNT];
 
@@ -99,7 +105,7 @@ Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0)
 		world.getContactGenerators().push_back(&rods[i]);
 	}
 
-
+	
 	// Create the cables
 	cables = new ParticleCable[CABLE_COUNT];
 
@@ -142,6 +148,7 @@ void Mobile::display()
      */
     MassAggregateApplication::display();
 
+	
 	
     glBegin(GL_LINES);
     
