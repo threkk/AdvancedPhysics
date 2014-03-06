@@ -8,8 +8,8 @@
 
 #include <gl/glut.h>
 #include <cyclone/cyclone.h>
-#include "app.h"
-#include "timing.h"
+#include "../../app.h"
+#include "../../timing.h"
 
 #include <stdio.h>
 
@@ -18,7 +18,7 @@
  */
 #define PARTICLES_COUNT 10
 #define ROD_COUNT 4
-#define CABLE_COUNT 5
+#define CABLE_COUNT 4
 #define SPRING_COUNT 4
 
 #define PMAS 4
@@ -58,6 +58,8 @@ Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0)
     particleArray[1].setVelocity(0.0, 0.0, 0.0);
     particleArray[1].setAcceleration(cyclone::Vector3::GRAVITY);
     particleArray[1].clearAccumulator();
+	particleArray[1].setMass(PMAS);
+    particleArray[1].setDamping(0.9f);
 
 	
 	// Corners of the cross
@@ -94,14 +96,15 @@ Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0)
 		particleArray[i].setVelocity(0.0, 0.0, 0.0);
 		particleArray[i].setAcceleration(cyclone::Vector3::GRAVITY);
 		particleArray[i].clearAccumulator();
+		particleArray[i].setMass(PMAS);
+        particleArray[i].setDamping(0.9f);
     }
 
 	
 	// Create the rods
 	rods = new ParticleRod[ROD_COUNT];
 
-	for (unsigned i = 0; i < 4; i++)
-    {
+	for (unsigned i = 0; i < 4; i++){
 		rods[i].particle[0] = &particleArray[1];
 		rods[i].particle[1] = &particleArray[i+2];
 		rods[i].length = 2;
@@ -112,30 +115,19 @@ Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0)
 	// Create the cables
 	cables = new ParticleCable[CABLE_COUNT];
 
-	for (unsigned i = 0; i < 4; i++)
-    {
+	for (unsigned i = 0; i < 4; i++){
 		cables[i].particle[0] = &particleArray[0];
 		cables[i].particle[1] = &particleArray[i+2];
-		cables[i].maxLength = 1.9f;
+		cables[i].maxLength = 0.3f;
 		cables[i].restitution = 0.3f;
 		world.getContactGenerators().push_back(&cables[i]);
 	}
 
-    cables[4].particle[0] = &particleArray[0];
-    cables[4].particle[1] = &particleArray[1];
-    cables[4].maxLength = 1.9f;
-    cables[4].restitution = 0.3f;
-    world.getContactGenerators().push_back(&cables[4]);
 
 	// Create the springs
 	springs = new ParticleAnchoredSpring[SPRING_COUNT];
-   
-    
-    // Set mass and dampling
-    for (unsigned i = 1; i < PARTICLES_COUNT; i++) {
-        particleArray[i].setMass(PMAS);
-        particleArray[i].setDamping(0.9f);
-    }
+
+	
     
 }
 
