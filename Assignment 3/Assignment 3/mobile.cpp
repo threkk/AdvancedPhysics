@@ -9,8 +9,8 @@
 #include <gl/glut.h>
 #include <cyclone/cyclone.h>
 #include <math.h>
-#include "../../app.h"
-#include "../../timing.h"
+#include "app.h"
+#include "timing.h"
 
 #include <stdio.h>
 
@@ -22,7 +22,7 @@
 #define CABLE_COUNT 5
 #define SPRING_COUNT 4
 
-#define PMAS 4
+#define PMAS 1
 
 using namespace cyclone;
 
@@ -47,7 +47,6 @@ public:
 // Constructor
 Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0){
 
-
     // Fixed point, everthing hangs from here.
     particleArray[0].setPosition(0.0, 7.0, 0.0);
     particleArray[0].setVelocity(0.0, 0.0, 0.0);
@@ -61,7 +60,6 @@ Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0)
     particleArray[1].clearAccumulator();
 	particleArray[1].setMass(PMAS);
     particleArray[1].setDamping(0.9f);
-
 	
 	// Corners of the cross
 	for (int i = 2; i < 10; i++)
@@ -164,11 +162,10 @@ Mobile::Mobile() : MassAggregateApplication(PARTICLES_COUNT), cables(0), rods(0)
 	// Create the springs
 	for(unsigned i=0; i<SPRING_COUNT; i++){
 		ParticleForceRegistry registry;
-		springs[i] = new ParticleSpring(&particleArray[i+6],90.0,0.5);
-		registry.add(&particleArray[i+2], springs[i]);
+		springs[i] = new ParticleSpring(&particleArray[i+2],5,0.1);
+        world.getForceRegistry().add(&particleArray[i+6], springs[i]);
 	}
 	
-    
 }
 
 // Destructor
@@ -176,17 +173,13 @@ Mobile::~Mobile()
 {
     if(rods) delete[] rods;
     if(cables) delete[] cables;
-    if(springs) delete[] springs;
+    if(springs) delete[] &springs;
 }
 
 // TODO: Añadir las fuerzas. No las estamos teniendo en cuenta hasta ahora.
 void Mobile::update()
 {
     MassAggregateApplication::update();
-
-	for (unsigned i = 0; i < SPRING_COUNT; i++) {
-       springs[i]->updateForce(&particleArray[6+i], 1.0);
-    }
     
 }
 
