@@ -210,24 +210,26 @@ void WallOfBoxes::reset()
 	projectile->setState(0.0f);
 
     // Initialise the boxes
-	cyclone::real x = 0;
+	cyclone::real x = -7;
 	cyclone::real y = 0;
     cyclone::real z = 20.0;
 	int i=0;
 
 	for (Box *box = boxData; box < boxData+boxes; box++)
     {
+		
 		if(i%4 == 0){
-			if(i == 0)
-				x = - box->halfSize.x;
-			else
-				x += box->halfSize.x + 0.5;
-			y = box->halfSize.y + 0.5;
+			x = -7;
+			if(i==4)
+				y += 6.5;
+			else if(i != 0)
+				y += 4.5;
+		}else{
+			x += 4.3;
 		}
 
 		cyclone::Vector3* position = new cyclone::Vector3(x,y,z);
         box->setState(*position, boxMass[i]);
-		y += box->halfSize.y*2 + 0.5;
 		i++;
     }
 
@@ -238,16 +240,16 @@ void WallOfBoxes::newSimulation()
 
 	printf("Generating new randon masses. \n");
 
-	float LO = 1.0;
-	float HI = 50.0;
+	float LO = 20.0;
+	float HI = 500.0;
 
 	//Generate randomized masses for the boxes
 	for(int i = 0; i < boxes; i++){
 		float r = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
+		printf("%f\n",r);
 		boxMass[i] = r;
 	}
-	float r = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
-
+	printf("__________________________________________________________\n");
 	reset();
 }
 
