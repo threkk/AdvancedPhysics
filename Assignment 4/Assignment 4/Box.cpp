@@ -23,7 +23,7 @@ class Projectile : public CollisionBox {
 public:
     Projectile(){
         body = new RigidBody;
-        massConstant = 8.0f;
+        massConstant = 100.0f;
     }
     
     ~Projectile(){
@@ -66,6 +66,14 @@ public:
         body->calculateDerivedData();
         calculateInternals();
     }
+
+	void moveRight(){
+		body->setPosition(body->getPosition().x - 1, body->getPosition().y, body->getPosition().z);
+	}
+
+	void moveLeft(){
+		body->setPosition(body->getPosition().x + 1, body->getPosition().y, body->getPosition().z);
+	}
     
     void increseMass(){
         massConstant += 1.0f;
@@ -212,7 +220,7 @@ void WallOfBoxes::reset()
     // Initialise the boxes
 	cyclone::real x = -7;
 	cyclone::real y = 0;
-    cyclone::real z = 20.0;
+    cyclone::real z = 60.0;
 	int i=0;
 
 	for (Box *box = boxData; box < boxData+boxes; box++)
@@ -240,8 +248,8 @@ void WallOfBoxes::newSimulation()
 
 	printf("Generating new randon masses. \n");
 
-	float LO = 20.0;
-	float HI = 500.0;
+	float LO = 1.0;
+	float HI = 50.0;
 
 	//Generate randomized masses for the boxes
 	for(int i = 0; i < boxes; i++){
@@ -260,7 +268,7 @@ const char* WallOfBoxes::getTitle()
 
 void WallOfBoxes::fire()
 {
-    projectile->body->setVelocity(0.0f, 0.0f, 20.0f);
+    projectile->body->setVelocity(0.0f, 17.5f, 20.0f);
     Vector3 accel;
     accel.y = -0.5f;
     accel.addScaledVector(Vector3::GRAVITY, 1);
@@ -321,8 +329,8 @@ void WallOfBoxes::display()
     // Render the description
     glColor3f(0.0f, 0.0f, 0.0f);
     char text[256];
-    sprintf(text, "Click: Fire\nR: reset simulation   N: generate new random masses\nJ-K: Increase/decrease mass\nMass: %f", projectile->getMass());
-    renderText(10.0f, 44.0f, text);
+    sprintf(text, "Click: Fire\nR: reset simulation   N: generate new random masses\nA-D: move the projectile left/right\nJ-K: Increase/decrease mass\nMass: %f", projectile->getMass());
+    renderText(10.0f, 54.0f, text);
 }
 
 void WallOfBoxes::generateContacts()
@@ -373,6 +381,9 @@ void WallOfBoxes::key(unsigned char key)
     {
         case '+': case 'k' : case 'K' : projectile->increseMass(); break;
         case '-': case 'j' : case 'J' : projectile->decreaseMass(); break;
+
+		case 'd': case 'D' : projectile->moveRight(); break;
+        case 'a': case 'A' : projectile->moveLeft(); break;
             
         case 'r': case 'R': reset(); break;
 		case 'n': case 'N': newSimulation(); break;
