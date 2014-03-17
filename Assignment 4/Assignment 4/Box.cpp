@@ -7,8 +7,10 @@
 
 #include <gl/glut.h>
 #include <cyclone/cyclone.h>
-#include "app.h"
-#include "timing.h"
+#include "../../app.h"
+#include "../../timing.h"
+#include <ctime>
+#include <cstdlib>
 
 #include <stdio.h>
 
@@ -45,7 +47,7 @@ public:
         body->setVelocity(0,0,0);
         body->setAcceleration(Vector3::GRAVITY);
         body->setRotation(cyclone::Vector3(0,0,0));
-        halfSize = cyclone::Vector3(1,1,1);
+        halfSize = cyclone::Vector3(2,2,2);
         
         body->setMass(getMass());
         
@@ -104,7 +106,7 @@ public:
     }
 
     /** Sets the box to a specific location. */
-    void setState(const cyclone::Vector3 &position)
+    void setState(const cyclone::Vector3 &position, real massConstant)
     {
         body->setPosition(position);
         body->setOrientation(1,0,0,0);
@@ -112,7 +114,7 @@ public:
         body->setRotation(cyclone::Vector3(0,0,0));
         halfSize = cyclone::Vector3(2,2,2);
 
-        cyclone::real mass = halfSize.x * halfSize.y * halfSize.z * 8.0f;
+        cyclone::real mass = halfSize.x * halfSize.y * halfSize.z * massConstant;
         body->setMass(mass);
 
         cyclone::Matrix3 tensor;
@@ -150,8 +152,14 @@ class WallOfBoxes : public RigidBodyApplication
     /** Holds the box data. */
     Box boxData[boxes];
 
-    /** Resets the position of all the boxes and primes the explosion. */
+	/** Holds the mass of the boxes. */
+    real boxMass[boxes];
+
+    /** Resets the position of all the boxes without changing the masses. */
     virtual void reset();
+
+	/** Resets the position of all the boxes and generates new random masses. */
+    virtual void newSimulation();
 
     /** Build the contacts for the current situation. */
     virtual void generateContacts();
@@ -176,9 +184,10 @@ public:
 
 WallOfBoxes::WallOfBoxes() : RigidBodyApplication()
 {
+	srand (static_cast <unsigned> (time(0)));
     pauseSimulation = false;
 	projectile = new Projectile();
-    reset();
+    newSimulation();
 }
 
 
@@ -217,11 +226,29 @@ void WallOfBoxes::reset()
 		}
 
 		cyclone::Vector3* position = new cyclone::Vector3(x,y,z);
-        box->setState(*position);
+        box->setState(*position, boxMass[i]);
 		y += box->halfSize.y*2 + 0.5;
 		i++;
     }
 
+}
+
+void WallOfBoxes::newSimulation()
+{
+
+	printf("Generating new randon masses. \n");
+
+	float LO = 1.0;
+	float HI = 50.0;
+
+	//Generate randomized masses for the boxes
+	for(int i = 0; i < boxes; i++){
+		float r = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
+		boxMass[i] = r;
+	}
+	float r = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
+
+	reset();
 }
 
 const char* WallOfBoxes::getTitle()
@@ -292,8 +319,8 @@ void WallOfBoxes::display()
     // Render the description
     glColor3f(0.0f, 0.0f, 0.0f);
     char text[256];
-    sprintf(text, "Click: Fire\nj-k: Increase/decrease mass\nMass:%f", projectile->getMass());
-    renderText(10.0f, 34.0f, text);
+    sprintf(text, "Click: Fire\nR: reset simulation   N: generate new random masses\nJ-K: Increase/decrease mass\nMass: %f", projectile->getMass());
+    renderText(10.0f, 44.0f, text);
 }
 
 void WallOfBoxes::generateContacts()
@@ -346,6 +373,7 @@ void WallOfBoxes::key(unsigned char key)
         case '-': case 'j' : case 'J' : projectile->decreaseMass(); break;
             
         case 'r': case 'R': reset(); break;
+		case 'n': case 'N': newSimulation(); break;
     }
 }
 
