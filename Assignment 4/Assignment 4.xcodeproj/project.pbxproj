@@ -38,7 +38,6 @@
 		9DE2DEB618D1A64600B9A845 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		9DE2DEB818D1A64C00B9A845 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		9DE2DEBA18D1A65800B9A845 /* libcyclone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcyclone.a; sourceTree = "<group>"; };
-		9DE2DEC218D1A7D400B9A845 /* example.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = example.cpp; sourceTree = "<group>"; };
 		9DE2DEC418D1AAFA00B9A845 /* Box.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Box.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -76,7 +75,6 @@
 		9DE2DE9C18D1A58F00B9A845 /* Assignment 4 */ = {
 			isa = PBXGroup;
 			children = (
-				9DE2DEC218D1A7D400B9A845 /* example.cpp */,
 				9DE2DEAE18D1A62E00B9A845 /* app.cpp */,
 				9DE2DEAF18D1A62E00B9A845 /* app.h */,
 				9DE2DEB018D1A62E00B9A845 /* main.cpp */,
@@ -279,6 +277,7 @@
 				9DE2DEA518D1A58F00B9A845 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
