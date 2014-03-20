@@ -11,6 +11,7 @@
 #include "timing.h"
 #include <ctime>
 #include <cstdlib>
+#include <time.h>
 
 #include <stdio.h>
 
