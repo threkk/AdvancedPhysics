@@ -1,5 +1,5 @@
 //
-//  Box.cpp
+//  box.cpp
 //  Assignment 4
 //
 //  Created by Alberto Martinez de Murga Ramirez, 500693826
@@ -16,24 +16,30 @@
 
 using namespace cyclone;
 
+
+/** The boxes that are going to be thrown against the wall. */
 class Projectile : public CollisionBox
 {
+    
 private:
+    /** Mass of the box*/
     real massConstant;
 
 public:
-
+    /** Constructor */
     Projectile()
     {
         body = new RigidBody;
-        massConstant = 100.0f;
+        // 25 by default
+        massConstant = 25.0f;
     }
-    
+    /** Destructor */
     ~Projectile()
     {
         delete body;
     }
     
+    /** Render the box */
     void render()
     {
         GLfloat mat[16];
@@ -46,21 +52,24 @@ public:
         glPopMatrix();
     }
     
+    /** This function in general terms initialize all the params of the box in the space. */
     void setState(cyclone::real z)
     {
+        // Position
         body->setPosition(0, 3, z);
         body->setOrientation(1,0,0,0);
+        body->setRotation(cyclone::Vector3(0,0,0));
+        // Velocity
         body->setVelocity(0,0,0);
         body->setAcceleration(Vector3::GRAVITY);
-        body->setRotation(cyclone::Vector3(0,0,0));
+        // Mass
         halfSize = cyclone::Vector3(2,2,2);
-        
         body->setMass(getMass());
-        
+        // Tensor
         cyclone::Matrix3 tensor;
         tensor.setBlockInertiaTensor(halfSize, getMass());
         body->setInertiaTensor(tensor);
-        
+        // Damping
         body->setLinearDamping(0.95f);
         body->setAngularDamping(0.8f);
         body->clearAccumulators();
@@ -73,42 +82,49 @@ public:
         calculateInternals();
     }
 
+    /** Moves the box slightly to the right */
 	void moveRight()
     {
 		body->setPosition(body->getPosition().x - 1, body->getPosition().y, body->getPosition().z);
 	}
-
+    
+    /** Moves the box slightly to the left */
 	void moveLeft()
     {
 		body->setPosition(body->getPosition().x + 1, body->getPosition().y, body->getPosition().z);
 	}
     
+    /** Calculate the mass */
+    real getMass()
+    {
+        real mass = halfSize.x * halfSize.y * halfSize.z * massConstant;
+        return mass;
+    }
+    
+    /** Increases the mass constant, varying the final mass. */
     void increseMass()
     {
         massConstant += 1.0f;
         body->setMass(getMass());
     }
     
+    /** Decreases the mass constant, varying the final mass. */
     void decreaseMass()
     {
-        if (massConstant > 1.0f) {
+        if (massConstant > 1.0f)
+        {
             massConstant -= 1.0f;
-
         }
         body->setMass(getMass());
     }
-    
-    real getMass()
-    {
-        real mass = halfSize.x * halfSize.y * halfSize.z * massConstant;
-        return mass;
-    }
+
 };
 
+/** The boxes that are used to build the wall */
 class Box : public cyclone::CollisionBox
 {
+    
 public:
-
     Box()
     {
         body = new cyclone::RigidBody;
@@ -159,14 +175,22 @@ public:
     }
 };
 
-
+/** 
+ * Main class of the demo. It creates a wall of boxes and 25 boxes to throw. Also it handles all the
+ * contacts and interactions.
+ */
 class WallOfBoxes : public RigidBodyApplication
 {
+    /** Number of boxes in the wall */
     const static unsigned BOXES = 16;
-    const static unsigned PROJ = 10;
+    /** Amount of boxes to throw */
+    const static unsigned PROJ = 25;
 
+    /** Array with all the projectiles */
 	Projectile projectiles[PROJ];
+    /** Pointer to the current projectile */
     Projectile * firing;
+    /** Counter of the projectiles */
     unsigned PROJNUM;
 
     /** Holds the box data. */
@@ -192,7 +216,6 @@ class WallOfBoxes : public RigidBodyApplication
 
 public:
 
-    /** Creates a new demo object. */
     WallOfBoxes();
     
     virtual const char* getTitle();
@@ -202,7 +225,7 @@ public:
     virtual void key(unsigned char key);
 };
 
-
+/** Creates the demo and initialize the projectiles */
 WallOfBoxes::WallOfBoxes() : RigidBodyApplication()
 {
     pauseSimulation = false;
@@ -219,7 +242,7 @@ WallOfBoxes::WallOfBoxes() : RigidBodyApplication()
     newSimulation();
 }
 
-
+/** Initializes the graphics for the demo. */
 void WallOfBoxes::initGraphics()
 {
     GLfloat lightAmbient[] = {0.8f,0.8f,0.8f,1.0f};
@@ -233,8 +256,10 @@ void WallOfBoxes::initGraphics()
     Application::initGraphics();
 }
 
+/** Reset the simulation */
 void WallOfBoxes::reset()
 {
+    // Reset the current projectile to the first one and prepare it to be shot.
     PROJNUM = 0;
     firing = &projectiles[PROJNUM];
     firing->setState(0.0f);
@@ -266,6 +291,7 @@ void WallOfBoxes::reset()
 
 }
 
+/** Creates a new simulation with random masses. */
 void WallOfBoxes::newSimulation()
 {
 
@@ -282,11 +308,7 @@ void WallOfBoxes::newSimulation()
 	reset();
 }
 
-const char* WallOfBoxes::getTitle()
-{
-    return "Advanced Physics > Wall of Boxes (Assignment 4)";
-}
-
+/** Shoots the current projectile*/
 void WallOfBoxes::fire()
 {
     firing->body->setVelocity(0.0f, 17.5f, 20.0f);
@@ -295,24 +317,21 @@ void WallOfBoxes::fire()
     accel.addScaledVector(Vector3::GRAVITY, 1);
     firing->body->setAcceleration(accel);
     firing->body->setDamping(0.99f, 0.8f);
-    
-    printf("Fired %d\n",PROJNUM);
-    if (PROJNUM < PROJ-1) {
+    // If we haven't shot the last box yet.
+    if (PROJNUM < PROJ-1)
+    {
+        // Increase the counter
         PROJNUM++;
+        // Change the pointer
         firing = &projectiles[PROJNUM];
+        // And ready to shoot.
         firing->setState(0.0f);
     }
 }
 
+/** Update the internals of the objects. */
 void WallOfBoxes::updateObjects(cyclone::real duration)
 {
-    
-    for (unsigned i = 0; i <= PROJNUM; i++) {
-        projectiles[i].body->integrate(duration);
-        projectiles[i].calculateInternals();
-    }
-
-
     // Update the boxes
     for (Box *box = boxData; box < boxData + BOXES; box++)
     {
@@ -320,8 +339,15 @@ void WallOfBoxes::updateObjects(cyclone::real duration)
         box->body->integrate(duration);
         box->calculateInternals();
     }
+    
+    for (unsigned i = 0; i <= PROJNUM; i++)
+    {
+        projectiles[i].body->integrate(duration);
+        projectiles[i].calculateInternals();
+    }
 }
 
+/** Display all the boxes of the wall and the boxes which have been already shot. */
 void WallOfBoxes::display()
 {
     const static GLfloat lightPosition[] = {-1,1,0,0};
@@ -341,7 +367,6 @@ void WallOfBoxes::display()
     }
     glEnd();
 
-    // Render the box
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
@@ -349,12 +374,14 @@ void WallOfBoxes::display()
     glEnable(GL_COLOR_MATERIAL);
     glColor3f(1,0,0);
     
+    // Render the box
     for (Box *box = boxData; box < boxData + BOXES; box++)
     {
         box->render();
     }
-    
-    for (unsigned i = 0; i <= PROJNUM; i++) {
+    // Render the projectile
+    for (unsigned i = 0; i <= PROJNUM; i++)
+    {
         projectiles[i].render();
     }
 
@@ -365,10 +392,11 @@ void WallOfBoxes::display()
     // Render the description
     glColor3f(0.0f, 0.0f, 0.0f);
     char text[256];
-    sprintf(text, "Click: Fire\nR: reset simulation   N: generate new random masses\nA-D: move the projectile left/right\nJ-K: Increase/decrease mass\nMass: %f", firing->getMass());
+    sprintf(text, "Click: Fire\nR: reset simulation   N: generate new random masses\nA-D: move the projectile left/right\nW-S: Increase/decrease mass\nMass: %f", firing->getMass());
     renderText(10.0f, 54.0f, text);
 }
 
+/** Handles the contacts between boxes, projectiles and the plane. */
 void WallOfBoxes::generateContacts()
 {
     // Create the ground plane data
@@ -382,13 +410,23 @@ void WallOfBoxes::generateContacts()
     cData.restitution = 0.2;
     cData.tolerance = 0.1;
 
-	//Check collisions of the shot with the ground plane
+	// Check collisions of the shot with the ground plane
 	if (!cData.hasMoreContacts()) return;
-    for (unsigned i = 0; i <= PROJNUM; i++) {
+    for (unsigned i = 0; i <= PROJNUM; i++)
+    {
         CollisionDetector::boxAndHalfSpace(projectiles[i], plane, &cData);
     }
+    
+    // Check collisions among the projectiles.
+    for (unsigned i = 0; i <= PROJNUM; i++)
+    {
+        for (unsigned j = i - 1; j > 0; j--)
+        {
+            CollisionDetector::boxAndBox(projectiles[i], projectiles[j], &cData);
+        }
+    }
 
-    // Check collisions
+    // Check collisions of the boxes.
     for (Box *box = boxData; box < boxData + BOXES; box++)
     {
 		// Check for collisions with the ground plane
@@ -397,30 +435,33 @@ void WallOfBoxes::generateContacts()
 		
 		//Check for collisions with the projectile box
 		if (!cData.hasMoreContacts()) return;
-        for (unsigned i = 0; i <= PROJNUM; i++) {
-
+        for (unsigned i = 0; i <= PROJNUM; i++)
+        {
 			cyclone::CollisionDetector::boxAndBox(*box, projectiles[i], &cData);
         }
+        
 		// Check for collisions with the other boxes
-		for (Box *other = box+1; other < boxData + BOXES; other++){
+		for (Box *other = box+1; other < boxData + BOXES; other++)
+        {
 			if (!cData.hasMoreContacts()) return;
 			cyclone::CollisionDetector::boxAndBox(*box, *other, &cData);
 		}
     }
 }
 
+/** When left click, it shoots one box */
 void WallOfBoxes::mouse(int button, int state, int x, int y)
 {
-    // Fire the current box.
-    if (state == GLUT_DOWN) this->fire();
+    // Shoot the current box.
+    if (state == GLUT_DOWN && PROJNUM < PROJ) this->fire();
 }
 
 void WallOfBoxes::key(unsigned char key)
 {
     switch(key)
     {
-        case '+': case 'k' : case 'K' : firing->increseMass(); break;
-        case '-': case 'j' : case 'J' : firing->decreaseMass(); break;
+        case '+': case 'w' : case 'W' : firing->increseMass(); break;
+        case '-': case 's' : case 'S' : firing->decreaseMass(); break;
 
 		case 'd': case 'D' : firing->moveRight(); break;
         case 'a': case 'A' : firing->moveLeft(); break;
@@ -428,6 +469,11 @@ void WallOfBoxes::key(unsigned char key)
         case 'r': case 'R': reset(); break;
 		case 'n': case 'N': newSimulation(); break;
     }
+}
+
+const char* WallOfBoxes::getTitle()
+{
+    return "Advanced Physics > Wall of Boxes (Assignment 4)";
 }
 
 /**

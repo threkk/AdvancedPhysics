@@ -13,7 +13,7 @@
 		9DE2DEB718D1A64600B9A845 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE2DEB618D1A64600B9A845 /* GLUT.framework */; };
 		9DE2DEB918D1A64C00B9A845 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE2DEB818D1A64C00B9A845 /* OpenGL.framework */; };
 		9DE2DEBB18D1A65800B9A845 /* libcyclone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE2DEBA18D1A65800B9A845 /* libcyclone.a */; };
-		9DE2DEC618D1AAFA00B9A845 /* Box.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2DEC418D1AAFA00B9A845 /* Box.cpp */; };
+		9DE2DEC618D1AAFA00B9A845 /* box.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2DEC418D1AAFA00B9A845 /* box.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,7 +38,7 @@
 		9DE2DEB618D1A64600B9A845 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		9DE2DEB818D1A64C00B9A845 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		9DE2DEBA18D1A65800B9A845 /* libcyclone.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcyclone.a; sourceTree = "<group>"; };
-		9DE2DEC418D1AAFA00B9A845 /* Box.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Box.cpp; sourceTree = "<group>"; };
+		9DE2DEC418D1AAFA00B9A845 /* box.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = box.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +80,7 @@
 				9DE2DEB018D1A62E00B9A845 /* main.cpp */,
 				9DE2DEB118D1A62E00B9A845 /* timing.cpp */,
 				9DE2DEB218D1A62E00B9A845 /* timing.h */,
-				9DE2DEC418D1AAFA00B9A845 /* Box.cpp */,
+				9DE2DEC418D1AAFA00B9A845 /* box.cpp */,
 			);
 			path = "Assignment 4";
 			sourceTree = "<group>";
@@ -149,7 +149,7 @@
 				9DE2DEB418D1A62E00B9A845 /* main.cpp in Sources */,
 				9DE2DEB518D1A62E00B9A845 /* timing.cpp in Sources */,
 				9DE2DEB318D1A62E00B9A845 /* app.cpp in Sources */,
-				9DE2DEC618D1AAFA00B9A845 /* Box.cpp in Sources */,
+				9DE2DEC618D1AAFA00B9A845 /* box.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
