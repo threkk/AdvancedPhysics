@@ -13,16 +13,16 @@
 #include <stdio.h>
 
 
-class Die : public cyclone::CollisionBox
+class Dice : public cyclone::CollisionBox
 {
     
 public:
-    Die()
+    Dice()
     {
         body = new cyclone::RigidBody;
     }
 
-    ~Die()
+    ~Dice()
     {
         delete body;
     }
@@ -35,7 +35,7 @@ public:
         glPushMatrix();
         glMultMatrixf(mat);
         glScalef(halfSize.x*2, halfSize.y*2, halfSize.z*2);
-        glutSolidCube(1.0f);
+        drawCube(0.5f);
         glPopMatrix();
     }
 
@@ -65,6 +65,55 @@ public:
         body->calculateDerivedData();
         calculateInternals();
     }
+    
+    void drawCube(float size)
+    {
+        glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
+        // Top face (y = size)
+        // Define vertices in counter-clockwise (CCW) order with normal pointing out
+        glColor3f(0.0f, 1.0f, 0.0f);     // Green
+        glVertex3f( size, size, -size);
+        glVertex3f(-size, size, -size);
+        glVertex3f(-size, size,  size);
+        glVertex3f( size, size,  size);
+        
+        // Bottom face (y = -size)
+        glColor3f(1.0f, 0.5f, 0.0f);     // Orange
+        glVertex3f( size, -size,  size);
+        glVertex3f(-size, -size,  size);
+        glVertex3f(-size, -size, -size);
+        glVertex3f( size, -size, -size);
+        
+        // Front face  (z = size)
+        glColor3f(1.0f, 0.0f, 0.0f);     // Red
+        glVertex3f( size,  size, size);
+        glVertex3f(-size,  size, size);
+        glVertex3f(-size, -size, size);
+        glVertex3f( size, -size, size);
+        
+        // Back face (z = -size)
+        glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
+        glVertex3f( size, -size, -size);
+        glVertex3f(-size, -size, -size);
+        glVertex3f(-size,  size, -size);
+        glVertex3f( size,  size, -size);
+        
+        // Left face (x = -size)
+        glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+        glVertex3f(-size,  size,  size);
+        glVertex3f(-size,  size, -size);
+        glVertex3f(-size, -size, -size);
+        glVertex3f(-size, -size,  size);
+        
+        // Right face (x = size)
+        glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
+        glVertex3f(size,  size, -size);
+        glVertex3f(size,  size,  size);
+        glVertex3f(size, -size,  size);
+        glVertex3f(size, -size, -size);
+        glEnd();  // End of drawing color-cube
+        
+    }
 };
 
 
@@ -78,10 +127,7 @@ class DiceDemo : public RigidBodyApplication
     const static unsigned DICE = 3;
 
 	/** Holds the dice data. */
-    Die diceData[DICE];
-
-    /** Detonates the explosion. */
-    void fire();
+    Dice dices[DICE];
 
     /** Resets the position of all the boxes and primes the explosion. */
     virtual void reset();
@@ -116,8 +162,6 @@ public:
 DiceDemo::DiceDemo() : RigidBodyApplication()
 {
 	pauseSimulation = false;
-
-    // Reset the position of the boxes
     reset();
 }
 
@@ -126,26 +170,23 @@ const char* DiceDemo::getTitle()
     return "Assignment 5 - Advanced Physics";
 }
 
-void DiceDemo::fire()
-{
-    
-}
-
 void DiceDemo::reset()
 {
 
 	// Initialise the boxes
-	cyclone::real x = 0;
-	cyclone::real y = 10;
-    cyclone::real z = 10;
-	int i=0;
-
-	for (Die *die = diceData; die < diceData + DICE; die++)
-    {
-		cyclone::Vector3* position = new cyclone::Vector3(x,y,z);
-		cyclone::Vector3* velocity = new cyclone::Vector3(0,-5,-10.0);
-        die->setState(*position, *velocity);
-		i++;
+    
+    for (unsigned i = 0; i < DICE; i++) {
+        
+        // TODO: Make this random
+        cyclone::real x = 0;
+        cyclone::real y = 10 + i * 7;
+        cyclone::real z = 10 + i;
+        cyclone::Vector3* position = new cyclone::Vector3(x,y,z);
+        cyclone::Vector3* velocity = new cyclone::Vector3(0,-5,-10.0);
+        dices[i] = *new Dice();
+        dices[i].setState(*position,*velocity);
+        dices[i].body->setOrientation(i,i,i,0);
+        
     }
 
 }
@@ -166,12 +207,13 @@ void DiceDemo::generateContacts()
 
 
 	// Check collisions
-    for (Die *die = diceData; die < diceData + DICE; die++)
-    {
-		// Check for collisions with the ground plane
-        if (!cData.hasMoreContacts()) return;
-        cyclone::CollisionDetector::boxAndHalfSpace(*die, plane, &cData);
-	}
+    for (unsigned i = 0; i < DICE; i++) {
+        if(!cData.hasMoreContacts()) return;
+        cyclone::CollisionDetector::boxAndHalfSpace(dices[i], plane, &cData);
+        for (int j = i - 1; j >= 0; j--) {
+            cyclone::CollisionDetector::boxAndBox(dices[i], dices[j], &cData);
+        }
+    }
 
    
 }
@@ -179,11 +221,9 @@ void DiceDemo::generateContacts()
 void DiceDemo::updateObjects(cyclone::real duration)
 {
     // Update the dice
-    for (Die *die = diceData; die < diceData + DICE; die++)
-    {
-        // Run the physics
-        die->body->integrate(duration);
-        die->calculateInternals();
+    for (unsigned i = 0; i < DICE; i++) {
+        dices[i].body->integrate(duration);
+        dices[i].calculateInternals();
     }
 }
 
@@ -203,7 +243,7 @@ void DiceDemo::initGraphics()
 
 void DiceDemo::display()
 {
-    const static GLfloat lightPosition[] = {1,-1,0,0};
+    const static GLfloat lightPosition[] = {0,1,1,0};
     const static GLfloat lightPositionMirror[] = {1,1,0,0};
 
     // Clear the viewport and set the camera direction
@@ -239,9 +279,8 @@ void DiceDemo::display()
     glColor3f(1,0,0);
     
     // Render the dice    
-    for (Die *die = diceData; die < diceData + DICE; die++)
-    {
-        die->render();
+    for (unsigned i = 0; i < DICE; i++) {
+        dices[i].render();
     }
 
 	glDisable(GL_COLOR_MATERIAL);
@@ -272,21 +311,9 @@ void DiceDemo::key(unsigned char key)
 {
     switch(key)
     {
-    case 'e': case 'E':
-       
-        return;
-
 	case 'r': case 'R':
        reset();
        return;
-
-    case 't': case 'T':
-       
-        return;
-
-    case 'w': case 'W':
-       
-        return;
     }
 
     RigidBodyApplication::key(key);
