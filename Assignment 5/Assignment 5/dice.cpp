@@ -68,50 +68,50 @@ public:
     
     void drawCube(float size)
     {
-        glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
-        // Top face (y = size)
         // Define vertices in counter-clockwise (CCW) order with normal pointing out
-        glColor3f(0.0f, 1.0f, 0.0f);     // Green
+        glBegin(GL_QUADS);
+        // Top green face (y = size)
+        glColor3f(0.0f, 1.0f, 0.0f);
         glVertex3f( size, size, -size);
         glVertex3f(-size, size, -size);
         glVertex3f(-size, size,  size);
         glVertex3f( size, size,  size);
         
-        // Bottom face (y = -size)
-        glColor3f(1.0f, 0.5f, 0.0f);     // Orange
+        // Bottom orange face (y = -size)
+        glColor3f(1.0f, 0.5f, 0.0f);
         glVertex3f( size, -size,  size);
         glVertex3f(-size, -size,  size);
         glVertex3f(-size, -size, -size);
         glVertex3f( size, -size, -size);
         
-        // Front face  (z = size)
-        glColor3f(1.0f, 0.0f, 0.0f);     // Red
+        // Front red face  (z = size)
+        glColor3f(1.0f, 0.0f, 0.0f);
         glVertex3f( size,  size, size);
         glVertex3f(-size,  size, size);
         glVertex3f(-size, -size, size);
         glVertex3f( size, -size, size);
         
-        // Back face (z = -size)
-        glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
+        // Back yellow face (z = -size)
+        glColor3f(1.0f, 1.0f, 0.0f);
         glVertex3f( size, -size, -size);
         glVertex3f(-size, -size, -size);
         glVertex3f(-size,  size, -size);
         glVertex3f( size,  size, -size);
         
-        // Left face (x = -size)
-        glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+        // Left blue face (x = -size)
+        glColor3f(0.0f, 0.0f, 1.0f);
         glVertex3f(-size,  size,  size);
         glVertex3f(-size,  size, -size);
         glVertex3f(-size, -size, -size);
         glVertex3f(-size, -size,  size);
         
-        // Right face (x = size)
-        glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
+        // Right magenta face (x = size)
+        glColor3f(1.0f, 0.0f, 1.0f);
         glVertex3f(size,  size, -size);
         glVertex3f(size,  size,  size);
         glVertex3f(size, -size,  size);
         glVertex3f(size, -size, -size);
-        glEnd();  // End of drawing color-cube
+        glEnd();
         
     }
 };
@@ -177,15 +177,14 @@ void DiceDemo::reset()
     
     for (unsigned i = 0; i < DICE; i++) {
         
-        // TODO: Make this random
-        cyclone::real x = 0;
-        cyclone::real y = 10 + i * 7;
-        cyclone::real z = 10 + i;
+        cyclone::real x = rand() % 10;
+        cyclone::real y = 10 + rand() % 20;
+        cyclone::real z = 10 + rand() % 20;
         cyclone::Vector3* position = new cyclone::Vector3(x,y,z);
-        cyclone::Vector3* velocity = new cyclone::Vector3(0,-5,-10.0);
+        cyclone::Vector3* velocity = new cyclone::Vector3(0,-10.0,-10.0);
         dices[i] = *new Dice();
         dices[i].setState(*position,*velocity);
-        dices[i].body->setOrientation(i,i,i,0);
+        dices[i].body->setOrientation(rand()%100*0.01,rand()%100*0.01,rand()%100*0.01,0);
         
     }
 
@@ -243,12 +242,9 @@ void DiceDemo::initGraphics()
 
 void DiceDemo::display()
 {
-    const static GLfloat lightPosition[] = {0,1,1,0};
-    const static GLfloat lightPositionMirror[] = {1,1,0,0};
-
+    const static GLfloat lightPosition[] = {-100,100,1,0};
     // Clear the viewport and set the camera direction
     RigidBodyApplication::display();
-
 
     // Draw some scale circles
     glColor3f(0.75, 0.75, 0.75);
@@ -274,7 +270,6 @@ void DiceDemo::display()
 	glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
     glColor3f(1,0,0);
     
