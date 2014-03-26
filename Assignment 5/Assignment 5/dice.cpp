@@ -7,10 +7,11 @@
 
 #include <gl/glut.h>
 #include <cyclone/cyclone.h>
-#include "app.h"
-#include "timing.h"
+#include "../../app.h"
+#include "../../timing.h"
 
 #include <stdio.h>
+#include <time.h>
 
 
 class Dice : public cyclone::CollisionBox
@@ -39,12 +40,12 @@ public:
         glPopMatrix();
     }
 
-    void setState(const cyclone::Vector3 &position, const cyclone::Vector3 &velocity)
+    void setState(const cyclone::Vector3 &position, const cyclone::Vector3 &velocity, const cyclone::Vector3 &rotation)
     {
         body->setPosition(position);
         body->setOrientation(1,0,0,0);
         body->setVelocity(velocity);
-        body->setRotation(cyclone::Vector3(0,0,0));
+        body->setRotation(rotation);
         halfSize = cyclone::Vector3(2,2,2);
 
         cyclone::real mass = halfSize.x * halfSize.y * halfSize.z * 10.0;
@@ -162,6 +163,7 @@ public:
 DiceDemo::DiceDemo() : RigidBodyApplication()
 {
 	pauseSimulation = false;
+	srand(time(NULL));
     reset();
 }
 
@@ -182,9 +184,13 @@ void DiceDemo::reset()
         cyclone::real z = 10 + rand() % 20;
         cyclone::Vector3* position = new cyclone::Vector3(x,y,z);
         cyclone::Vector3* velocity = new cyclone::Vector3(0,-10.0,-10.0);
+
+
+		x = -1 - rand() % 5;
+        y = 1 + rand() % 5;
+		cyclone::Vector3* rotation = new cyclone::Vector3(x,y,0);
         dices[i] = *new Dice();
-        dices[i].setState(*position,*velocity);
-        dices[i].body->setOrientation(rand()%100*0.01,rand()%100*0.01,rand()%100*0.01,0);
+        dices[i].setState(*position,*velocity, *rotation);
         
     }
 
@@ -244,7 +250,7 @@ void DiceDemo::display()
 {
     const static GLfloat lightPosition[] = {-100,100,1,0};
     // Clear the viewport and set the camera direction
-    RigidBodyApplication::display();
+	RigidBodyApplication::display();
 
     // Draw some scale circles
     glColor3f(0.75, 0.75, 0.75);
@@ -265,22 +271,10 @@ void DiceDemo::display()
     glVertex3f(0,0,20);
     glEnd();
 
-
-
-	glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-    glEnable(GL_COLOR_MATERIAL);
-    glColor3f(1,0,0);
-    
     // Render the dice    
     for (unsigned i = 0; i < DICE; i++) {
         dices[i].render();
     }
-
-	glDisable(GL_COLOR_MATERIAL);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
 
 	 // Render the description
     glColor3f(0.0f, 0.0f, 0.0f);
