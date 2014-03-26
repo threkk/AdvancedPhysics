@@ -338,14 +338,15 @@ unsigned DiceDemo::diceAndHalfSpace(const Dice &dice, const cyclone::CollisionPl
     // or on an edge, it will be reported as four or two contact points.
 
     // Go through each combination of + and - for each half-size
-    static cyclone::real mults[24][3] = {{0.6,1,1}, {1,0.6,1}, {1,1,0.6},
-										 {-0.6,1,1}, {-1,0.6,1}, {-1,1,0.6},
-										 {0.6,-1,1}, {1,-0.6,1}, {1,-1,0.6},
-										 {-0.6,-1,1}, {-1,-0.6,1}, {-1,-1,0.6},
-										 {0.6,1,-1}, {1,0.6,-1}, {1,1,-0.6},
-										 {-0.6,1,-1}, {-1,0.6,-1}, {-1,1,-0.6},
-	                                     {0.6,-1,-1}, {1,-0.6,-1}, {1,-1,-0.6},
-	                                     {-0.6,-1,-1}, {-1,-0.6,-1}, {-1,-1,-0.6}};
+	cyclone::real offset = 0.7;
+    static cyclone::real mults[24][3] = {{offset,1,1}, {1,offset,1}, {1,1,offset},
+										 {-offset,1,1}, {-1,offset,1}, {-1,1,offset},
+										 {offset,-1,1}, {1,-offset,1}, {1,-1,offset},
+										 {-offset,-1,1}, {-1,-offset,1}, {-1,-1,offset},
+										 {offset,1,-1}, {1,offset,-1}, {1,1,-offset},
+										 {-offset,1,-1}, {-1,offset,-1}, {-1,1,-offset},
+	                                     {offset,-1,-1}, {1,-offset,-1}, {1,-1,-offset},
+	                                     {-offset,-1,-1}, {-1,-offset,-1}, {-1,-1,-offset}};
 
     cyclone::Contact* contact = data->contacts;
     unsigned contactsUsed = 0;
