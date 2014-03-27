@@ -7,8 +7,8 @@
 
 #include <gl/glut.h>
 #include <cyclone/cyclone.h>
-#include "../../app.h"
-#include "../../timing.h"
+#include "app.h"
+#include "timing.h"
 
 #include <stdio.h>
 #include <time.h>
@@ -69,51 +69,126 @@ public:
     
     void drawCube(float size)
     {
-        // Define vertices in counter-clockwise (CCW) order with normal pointing out
-        glBegin(GL_QUADS);
+        // offset
+        float off = 0.4 * size;
+        
+        // Define vertices in counter-clockwise.
         // Top green face (y = size)
+        glBegin(GL_POLYGON);
         glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex3f( size, size, -size);
-        glVertex3f(-size, size, -size);
-        glVertex3f(-size, size,  size);
-        glVertex3f( size, size,  size);
-        
-        // Bottom orange face (y = -size)
-        glColor3f(1.0f, 0.5f, 0.0f);
-        glVertex3f( size, -size,  size);
-        glVertex3f(-size, -size,  size);
-        glVertex3f(-size, -size, -size);
-        glVertex3f( size, -size, -size);
-        
-        // Front red face  (z = size)
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex3f( size,  size, size);
-        glVertex3f(-size,  size, size);
-        glVertex3f(-size, -size, size);
-        glVertex3f( size, -size, size);
-        
-        // Back yellow face (z = -size)
-        glColor3f(1.0f, 1.0f, 0.0f);
-        glVertex3f( size, -size, -size);
-        glVertex3f(-size, -size, -size);
-        glVertex3f(-size,  size, -size);
-        glVertex3f( size,  size, -size);
-        
-        // Left blue face (x = -size)
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex3f(-size,  size,  size);
-        glVertex3f(-size,  size, -size);
-        glVertex3f(-size, -size, -size);
-        glVertex3f(-size, -size,  size);
-        
-        // Right magenta face (x = size)
-        glColor3f(1.0f, 0.0f, 1.0f);
-        glVertex3f(size,  size, -size);
-        glVertex3f(size,  size,  size);
-        glVertex3f(size, -size,  size);
-        glVertex3f(size, -size, -size);
+        glVertex3f( size, size, -size + off);
+        glVertex3f( size - off, size, -size);
+        glVertex3f(-size + off, size, -size);
+        glVertex3f(-size, size, -size + off);
+        glVertex3f(-size, size, size-off);
+        glVertex3f(-size + off, size, size);
+        glVertex3f( size - off, size, size);
+        glVertex3f( size, size, size - off);
         glEnd();
         
+        // Bottom orange face (y = -size)
+        glBegin(GL_POLYGON);
+        glColor3f(1.0f, 0.5f, 0.0f);
+        glVertex3f( size, -size, -size + off);
+        glVertex3f( size - off, -size, -size);
+        glVertex3f(-size + off, -size, -size);
+        glVertex3f(-size, -size, -size + off);
+        glVertex3f(-size, -size, size-off);
+        glVertex3f(-size + off, -size, size);
+        glVertex3f( size - off, -size, size);
+        glVertex3f( size, -size, size - off);
+        glEnd();
+        
+        // Front red face  (z = size)
+        glBegin(GL_POLYGON);
+        glColor3f(1.0f, 0.0f, 0.0f);
+        glVertex3f( size, size - off, size);
+        glVertex3f( size - off, size, size);
+        glVertex3f(-size + off, size, size);
+        glVertex3f(-size, size - off, size);
+        glVertex3f(-size, -size + off, size);
+        glVertex3f(-size + off, -size, size);
+        glVertex3f( size - off, -size, size);
+        glVertex3f( size, -size + off, size);
+        glEnd();
+        
+        // Back yellow face (z = -size)
+        glBegin(GL_POLYGON);
+        glColor3f(1.0f, 1.0f, 0.0f);
+        glVertex3f( size, size - off, -size);
+        glVertex3f( size - off, size, -size);
+        glVertex3f(-size + off, size, -size);
+        glVertex3f(-size, size - off, -size);
+        glVertex3f(-size, -size + off, -size);
+        glVertex3f(-size + off, -size, -size);
+        glVertex3f( size - off, -size, -size);
+        glVertex3f( size, -size + off, -size);
+        glEnd();
+        
+        // Left blue face (x = -size)
+        glBegin(GL_POLYGON);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        glVertex3f(-size, size - off, size);
+        glVertex3f(-size, size, size - off);
+        glVertex3f(-size, size, -size + off);
+        glVertex3f(-size, size - off, -size);
+        glVertex3f(-size, -size + off, -size);
+        glVertex3f(-size, -size, -size + off);
+        glVertex3f(-size, -size, size - off);
+        glVertex3f(-size, -size + off, size);
+        glEnd();
+        
+        // Right magenta face (x = size)
+        glBegin(GL_POLYGON);
+        glColor3f(1.0f, 0.0f, 1.0f);
+        glVertex3f(size, size - off, size);
+        glVertex3f(size, size, size - off);
+        glVertex3f(size, size, -size + off);
+        glVertex3f(size, size - off, -size);
+        glVertex3f(size, -size + off, -size);
+        glVertex3f(size, -size, -size + off);
+        glVertex3f(size, -size, size - off);
+        glVertex3f(size, -size + off, size);
+        glEnd();
+        
+        // Corners
+        glBegin(GL_TRIANGLES);
+        glColor3f(0, 0, 0);
+        
+        glVertex3d(+size - off, +size, +size);
+        glVertex3d(+size, +size - off, +size);
+        glVertex3d(+size, +size, +size - off);
+        
+        glVertex3d(+size - off, +size, -size);
+        glVertex3d(+size, +size - off, -size);
+        glVertex3d(+size, +size, -size + off);
+        
+        glVertex3d(+size - off, -size, +size);
+        glVertex3d(+size, -size + off, +size);
+        glVertex3d(+size, -size, +size - off);
+        
+        glVertex3d(+size - off, -size, -size);
+        glVertex3d(+size, -size + off, -size);
+        glVertex3d(+size, -size, -size + off);
+        
+        glVertex3d(-size + off, +size, +size);
+        glVertex3d(-size, +size - off, +size);
+        glVertex3d(-size, +size, +size - off);
+        
+        glVertex3d(-size + off, +size, -size);
+        glVertex3d(-size, +size - off, -size);
+        glVertex3d(-size, +size, -size + off);
+        
+        glVertex3d(-size + off, -size, +size);
+        glVertex3d(-size, -size + off, +size);
+        glVertex3d(-size, -size, +size - off);
+        
+        glVertex3d(-size + off, -size, -size);
+        glVertex3d(-size, -size + off, -size);
+        glVertex3d(-size, -size, -size + off);
+        
+        glEnd();
+
     }
 };
 
